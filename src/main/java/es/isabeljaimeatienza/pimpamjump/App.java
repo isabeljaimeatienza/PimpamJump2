@@ -75,14 +75,14 @@ public class App extends Application {
                 public void handle(ActionEvent ae) {
                     
                     
-                    fondoX1++;
-                    fondoX2++; 
+                    fondoX1--;
+                    fondoX2--; 
                     
                     imageView1.setX(fondoX1);
                     imageView2.setX(fondoX2);
                     if (fondoX2 == 0){
                         fondoX1 = 0;
-                        fondoX2 = -SCENE_WIDTH;
+                        fondoX2 = SCENE_WIDTH;
                         imageView1.setX(fondoX1);
                         imageView2.setX(fondoX2);
                     }
@@ -90,6 +90,8 @@ public class App extends Application {
                 
                })
                 );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
            //new Circle--> crear un objeto de la clase Circle
         Circle circleBall = new Circle(); //aquí voy a guardar una bola, con new me creo objeto circulo
         //llamando a métodos del objeto circleBall
