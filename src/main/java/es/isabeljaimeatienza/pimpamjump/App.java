@@ -8,9 +8,13 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -19,6 +23,7 @@ import javafx.util.Duration;
  */
 public class App extends Application {
     
+     int score = 0; 
     short ballCenterX = 80; //poner variables globales debajo del class
     byte ballCurrentSpeedX = 10; //esto hará que cambiemos la posición cuando queramos, es decir, le damos la velocidad, lo que le vamos sumando o restando
                                   // dependiendo si quiero que vaya hacia atrás para que vaya a la izquierda o sumando y que vaya a la derecha
@@ -36,8 +41,17 @@ public class App extends Application {
     int fondoX1 = 0;
     int fondoX2 = SCENE_WIDTH; 
     
+    short personajeHeight = 50;
+     short personajePosY = (short)((SCENE_HEIGHT- personajeHeight)/2);
+     byte personajeCurrentSpeed = 10; 
+     byte personajeDirection = 0; 
+     short personajePosX = (short)((SCENE_WIDTH - personajeHeight)/2);
+     
+    short stickHeight = 300;
+    short stickWidht = 150;
     @Override
     public void start(Stage stage) {
+        
         Pane root = new Pane(); //lo guardo en una variable que he llamado root (el panel)
         var scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);//Crea ventana de esa medida usando la variable root
         stage.setResizable(false);
@@ -51,9 +65,10 @@ public class App extends Application {
         Image image2 = new Image(getClass().getResourceAsStream("/images/fondo.png"));
         ImageView imageView2 = new ImageView(image2);
         
-       
-        imageView1.setX(fondoX1);
-        imageView1.setY(0);  
+       Image image3 = new Image(getClass().getResourceAsStream("/images/personaje.png"));
+        ImageView personaje = new ImageView(image3);
+        personaje.setX(400);
+        personaje.setY(600);  
         
         imageView2.setX(fondoX2);
         imageView2.setY(0);
@@ -67,6 +82,9 @@ public class App extends Application {
         
         root.getChildren().add(imageView1);
         root.getChildren().add(imageView2);
+        root.getChildren().add(personaje);
+        
+        
         
         
                 Timeline timeline = new Timeline(
@@ -96,7 +114,7 @@ public class App extends Application {
         Circle circleBall = new Circle(); //aquí voy a guardar una bola, con new me creo objeto circulo
         //llamando a métodos del objeto circleBall
         circleBall.setCenterX(0); // obligatoriamente debe de tener una medida, double permite decimales
-        circleBall.setCenterY(30);
+        circleBall.setCenterY(600);
         circleBall.setRadius(20);//son métodos: nosequé. lo que sea
         circleBall.setFill(Color.WHITE);//Cambiar el color de la bola
         
@@ -107,6 +125,43 @@ public class App extends Application {
         
         root.getChildren().add(circleBall);//los hijos hace referencia a las cosas que contiene el panel
        
+        
+        
+        //Creación de rectángulo
+        
+        Rectangle rectStick = new Rectangle();
+        rectStick.setWidth(10);
+        rectStick.setHeight(stickHeight);
+        rectStick.setX(SCENE_WIDTH-40);
+        rectStick.setY((SCENE_HEIGHT-stickHeight)/2);/* altura ventana menos altura rectangulo entre dos para centrar la pala*/
+        rectStick.setFill(Color.WHITE);
+        root.getChildren().add(rectStick);
+          //reconocer teclas-detectarlas
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+            public void handle(final KeyEvent keyEvent){
+                switch(keyEvent.getCode()){
+                    case UP:
+                        personaje.setY((personaje.getY())-3);
+                        personajePosY = -1; 
+                        break;
+                    case DOWN:
+                        personaje.setY((personaje.getY())+3);
+                        personajePosY= 1; 
+                        break;
+                    case RIGHT:
+                        personaje.setX((personaje.getX())+3);
+                        personajePosX= 1; 
+                        break;
+                     case LEFT:
+                        personaje.setX((personaje.getX())-3);
+                        personajePosX= -1; 
+                        break;
+                }
+             
+            }
+        });
+        
+        
          Timeline timeline2 = new Timeline(
             // 0.017 ~= 60 FPS
             new KeyFrame(Duration.seconds(0.017), new EventHandler<ActionEvent>() {
@@ -116,12 +171,26 @@ public class App extends Application {
                 }              
             })
         );
+        
+         personaje.setY(personajePosY);
+                    personajePosY += personajeCurrentSpeed * personajeDirection;
+                    if (personajePosY <= 0) {
+                        personajeDirection = 0;
+                        personajePosY = 0;
+                    }else if (personajePosY >= SCENE_HEIGHT- personajeHeight){
+                        personajeDirection = 0;
+                        personajePosY = (short) (SCENE_HEIGHT - personajeHeight);
+                    } 
+                          
         timeline2.setCycleCount(Timeline.INDEFINITE);
         timeline2.play();
-    }
+}
+    
+      
 
     public static void main(String[] args) {
         launch();
     }
+    
 
 }
