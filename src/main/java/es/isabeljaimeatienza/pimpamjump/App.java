@@ -5,6 +5,7 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -42,13 +43,15 @@ public class App extends Application {
     int fondoX2 = SCENE_WIDTH; 
     
     short personajeHeight = 50;
-     short personajePosY = (short)((SCENE_HEIGHT- personajeHeight)/2);
+    short personajeWidht = 30;
+    short personajePosY = (short)((SCENE_HEIGHT- personajeHeight)/2);
      byte personajeCurrentSpeed = 10; 
      byte personajeDirection = 0; 
      short personajePosX = (short)((SCENE_WIDTH - personajeHeight)/2);
      
-    short stickHeight = 300;
-    short stickWidht = 150;
+   
+   
+    
     @Override
     public void start(Stage stage) {
         
@@ -68,7 +71,8 @@ public class App extends Application {
        Image image3 = new Image(getClass().getResourceAsStream("/images/personaje.png"));
         ImageView personaje = new ImageView(image3);
         personaje.setX(400);
-        personaje.setY(600);  
+        personaje.setY(600); 
+        
         
         imageView2.setX(fondoX2);
         imageView2.setY(0);
@@ -87,7 +91,7 @@ public class App extends Application {
         
         
         
-                Timeline timeline = new Timeline(
+            Timeline timeline = new Timeline(
             // 0.017 ~= 60 FPS
             new KeyFrame(Duration.seconds(0.017), new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent ae) {
@@ -127,25 +131,32 @@ public class App extends Application {
        
         
         
-        //Creación de rectángulo
+      
         
-        Rectangle rectStick = new Rectangle();
-        rectStick.setWidth(10);
-        rectStick.setHeight(stickHeight);
-        rectStick.setX(SCENE_WIDTH-40);
-        rectStick.setY((SCENE_HEIGHT-stickHeight)/2);/* altura ventana menos altura rectangulo entre dos para centrar la pala*/
-        rectStick.setFill(Color.WHITE);
-        root.getChildren().add(rectStick);
+        
+        
+    
+   
+    //Creación de rectángulo    
+    Rectangle rectpersonaje = new Rectangle(60,40);
+      // Creación del grupo donde encontraremos la imagen con el rectángulo   
+        Group groupPersonaje = new Group();
+        //agrupamos el rectangulo creado + el perosnaje
+        groupPersonaje.getChildren().add(rectpersonaje);
+        groupPersonaje.getChildren().add(personaje);
+        root.getChildren().add(groupPersonaje);
+        
+        
           //reconocer teclas-detectarlas
         scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
             public void handle(final KeyEvent keyEvent){
                 switch(keyEvent.getCode()){
                     case UP:
-                        personaje.setY((personaje.getY())-3);
-                        personajePosY = -1; 
+                        //personaje.setY((personaje.getY())-150);
+                        personajeDirection = -1; 
                         break;
                     case DOWN:
-                        personaje.setY((personaje.getY())+3);
+                        groupPersonaje.setY((groupPersonaje.getY())+3);
                         personajePosY= 1; 
                         break;
                     case RIGHT:
@@ -168,10 +179,8 @@ public class App extends Application {
                 public void handle(ActionEvent ae) {
         circleBall.setCenterX(ballCenterX);
          ballCenterX+=ballCurrentSpeedX * ballDirectionX;
-                }              
-            })
-        );
-        
+                              
+        // Hará que el personaje se mueva hacia arriba solo al pusar UP 
          personaje.setY(personajePosY);
                     personajePosY += personajeCurrentSpeed * personajeDirection;
                     if (personajePosY <= 0) {
@@ -180,7 +189,11 @@ public class App extends Application {
                     }else if (personajePosY >= SCENE_HEIGHT- personajeHeight){
                         personajeDirection = 0;
                         personajePosY = (short) (SCENE_HEIGHT - personajeHeight);
+                        
                     } 
+                }      
+            })
+        );
                           
         timeline2.setCycleCount(Timeline.INDEFINITE);
         timeline2.play();
